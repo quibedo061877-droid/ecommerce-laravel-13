@@ -16,7 +16,17 @@ class AdminController extends Controller
 
     public function brands()
     {
-        $brands = Brand::orderBy('id', 'desc')->paginate(10);
+        $query = Brand::query();
+
+        if ($search = request('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+        if (request()->filled('status')) {
+            $query->where('status', request('status'));
+        }
+
+        $brands = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+
         return view('admin.brands', compact('brands'));
     }
 
