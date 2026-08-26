@@ -58,11 +58,6 @@
                                 @enderror
                             </div>
                             
-                            <div class="flex items-center">
-                                <input type="checkbox" id="receive" class="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary cursor-pointer" />
-                                <label for="receive" class="ml-2 text-sm text-gray-600 cursor-pointer">Receive Offers From Our Partners</label>
-                            </div>
-                            
                             <div class="pt-4">
                                 <button type="submit" class="w-full bg-primary text-white font-medium py-3 rounded hover:bg-blue-600 transition shadow-lg">
                                     Register
