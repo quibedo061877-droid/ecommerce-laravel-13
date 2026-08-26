@@ -101,10 +101,10 @@
         }
 
         // --- Slug Generation ---
-        const banrdNameInput = document.getElementById('name');
+        const brandNameInput = document.getElementById('name');
         const brandSlugInput = document.getElementById('slug');
 
-        banrdNameInput.addEventListener('input', function () {
+        brandNameInput.addEventListener('input', function () {
             const name = this.value;
 
              // Generate the slug from brand name
