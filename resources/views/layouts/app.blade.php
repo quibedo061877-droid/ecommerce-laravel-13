@@ -95,7 +95,7 @@
                             @guest
                                 <li><a href='{{ route("login") }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign In</a></li> 
                                 <li><a href='{{ route("register") }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign Up</a></li> 
-                                @else
+                            @else
                                 <li><a href='{{ Auth::user()->utype == "ADM" ? route("admin.index") : route("users.index") }}' class="block px-4 py-2 hover:bg-gray-100 text-sm">My Account</a></li>
                                 <li>
                                     <a href='{{ route("logout") }}' onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="block px-4 py-2 hover:bg-gray-100 text-sm">Sign Out</a>
