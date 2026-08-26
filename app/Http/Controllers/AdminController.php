@@ -41,6 +41,7 @@ class AdminController extends Controller
 
         if ($request->hasFile('image')) {
             $imageName = time() . '_' . uniqid() . '.' . $request->image->extension();
+            $this->generateThumbnailImage($request->image, $imageName, 'uploads/brands', 124, 124);
             $request->image->move(public_path('uploads/brands'), $imageName);
             $brand->image = $imageName;
         }
