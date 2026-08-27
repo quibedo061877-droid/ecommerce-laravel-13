@@ -45,7 +45,7 @@
                 <div class="flex justify-between items-center">
                     <div class="w-1/4">
                         <a href="{{ route('home.index') }}">
-                            <img src="{{ asset('assets/images/logo.png') }}" alt="Logo" class="max-w-[200px]" />
+                            <img src="{{ asset('assets/images/shopy.png') }}" alt="Logo" class="max-w-[200px]" />
                         </a>
                     </div>
 

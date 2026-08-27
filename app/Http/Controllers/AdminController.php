@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Brand;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
+use App\Models\Category;
 
 class AdminController extends Controller
 {
@@ -123,5 +124,21 @@ class AdminController extends Controller
 
         return back()->with('success', 'Brand deleted successfully!');
     }
+
+    public function categories()
+    {
+        $query = Category::query();
+
+        if ($search = request('search')) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+        if (request()->filled('status')) {
+            $query->where('status', request('status'));
+        }
+
+        $categories = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
+        return view('admin.categories', compact('categories'));
+    }
+    
 
 }
