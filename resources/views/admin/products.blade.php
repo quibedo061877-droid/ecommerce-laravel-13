@@ -12,7 +12,13 @@
             <i class="fa-solid fa-plus"></i> Add New Product
         </a>
     </div>
-
+    <!-- Display success message -->
+    @if (session('success'))
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong class="font-bold">Success!</strong>
+            <span class="block sm:inline">{{ session('success') }}</span>
+        </div>
+    @endif
     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
         <div class="flex flex-col md:flex-row gap-4 justify-between">
             <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
@@ -98,7 +104,7 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="product-edit.php" class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center" title="Edit">
+                                    <a href="{{route('admin.product.edit', ['id'=>$product->id])}}" class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
                                     <button class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center" onclick="deleteProduct(this, 'Samsung', 101)" title="Delete">
