@@ -19,19 +19,29 @@
                     <div class="space-y-4">
                     <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
-                            <input type="text" id="product-name" name="name" placeholder="e.g. Modern Sofa" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm" required>
+                            <input type="text" id="product-name" name="name" value="{{old('name)}}" placeholder="e.g. Modern Sofa" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm" required>
+                            @error('name')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Slug</label>
-                            <input type="text" id="product-slug" name="slug" placeholder="e.g. modern-sofa" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm bg-gray-50">
+                            <input type="text" id="product-slug" name="slug" value="{{old('slug)}}" placeholder="e.g. modern-sofa" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm bg-gray-50" readonly>
+                            @error('slug')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Short Description</label>
-                            <textarea id="short_description" name="short_description" rows="3" placeholder="Brief summary..." class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm"></textarea>
+                            <textarea id="short_description" name="short_description" rows="3" placeholder="Brief summary..." class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm" >{{old('short_description)}}</textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Product Information</label>
+                            <textarea id="information" name="information" rows="3" placeholder="Product Info..." class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm" >{{old('information)}}</textarea>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
-                            <textarea id="description" name="description" rows="18" placeholder="Detailed description..." class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm"></textarea>
+                            <textarea id="description" name="description" rows="18" placeholder="Detailed description..." class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary text-sm">{{old('description)}}</textarea>
                         </div>
                     </div>
                 </div>
@@ -41,26 +51,41 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Regular Price ($)</label>
-                            <input type="number"  id="regular_price" name="regular_price" placeholder="0.00" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            <input type="number"  id="regular_price" name="regular_price" value="{{old('regular_price)}}" placeholder="0.00" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            @error('regular_price')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Sale Price ($)</label>
-                            <input type="number"  id="sale_price" name="sale_price" placeholder="0.00" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            <input type="number"  id="sale_price" name="sale_price" value="{{old('sale_price)}}" placeholder="0.00" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            @error('sale_price')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">SKU</label>
-                            <input type="text" id="SKU" name="SKU" placeholder="Product SKU" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            <input type="text" id="SKU" name="SKU" value="{{old('SKU)}}" placeholder="Product SKU" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            @error('SKU')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Stock Status</label>
                             <select id="stock_status" name="stock_status" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm bg-white">
-                                <option value="instock">In Stock</option>
-                                <option value="outofstock">Out of Stock</option>
+                                <option value="instock" {{ old('stock_status') == 'instock' ? 'selected' : '' }}>In Stock</option>
+                                <option value="outofstock" {{ old('stock_status') == 'outofstock' ? 'selected' : '' }}>Out of Stock</option>
                             </select>
+                            @error('stock_status')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                            <input type="number" id="quantity" name="quantity" placeholder="Total items" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            <input type="number" id="quantity" name="quantity" value="{{old('quantity)}}" placeholder="Total items" class="w-full border px-4 py-2 rounded-lg focus:outline-none focus:border-primary text-sm">
+                            @error('quantity')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
@@ -73,12 +98,15 @@
                         <div class="flex items-center justify-between">
                             <span class="text-sm text-gray-600">Status:</span>
                             <select id="status" name="status" class="border rounded text-sm px-2 py-1 bg-white focus:outline-none">
-                                <option>Draft</option>
-                                <option>Published</option>
+                                <option {{ old('status') ? '' : 'selected' }}>Draft</option>
+                                <option {{ old('status') ? 'selected' : '' }}>Published</option>
                             </select>
+                            @error('status')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div class="flex items-center gap-2 pt-2">
-                            <input type="checkbox" id="featured" name="featured" class="rounded border-gray-300 text-primary focus:ring-primary">
+                            <input type="checkbox" id="featured" name="featured" value="1" {{ old('features') ? 'checked' : ''}} class="rounded border-gray-300 text-primary focus:ring-primary">
                             <label for="featured" class="text-sm text-gray-700 cursor-pointer">This is a featured product</label>
                         </div>
                         <button class="w-full bg-primary hover:bg-blue-600 text-white py-2 rounded-lg text-sm font-medium transition mt-4 shadow">Save Product</button>
@@ -96,6 +124,9 @@
                                     <option value="{{$category->id}}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{$category->name}}</option>
                                 @endforeach
                             </select>
+                            @error('category_id')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Brand</label>
@@ -105,6 +136,9 @@
                                     <option value="{{$brand->id}}" {{ old('brand_id') == $brand->id ? 'selected' : '' }}>{{$brand->name}}</option>
                                 @endforeach
                             </select>
+                            @error('brand_id')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                     </div>
                 </div>
