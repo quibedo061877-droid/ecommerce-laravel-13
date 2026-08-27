@@ -139,6 +139,96 @@ class AdminController extends Controller
         $categories = $query->orderBy('id', 'desc')->paginate(10)->withQueryString();
         return view('admin.categories', compact('categories'));
     }
+
+    public function categoryAdd()
+    {
+        $parentCategories = Category::where('parent_id', null)->orderBy('name', 'asc')->get();
+        return view('admin.category-add', compact('parentCategories'));
+    }
+
+    public function categoryStore(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:categories,slug',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => 'nullable|boolean',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        $category = new Category();
+        $category->name = $request->name;
+        $category->slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        $category->parent_id = $request->parent_id;
+        $category->status = $request->has('status') ? 1 : 0;
+
+        if ($request->hasFile('image')) {
+            $imageName = time() . '_' . uniqid() . '.' . $request->image->extension();
+            $this->generateThumbnailImage($request->image, $imageName, 'uploads/categories', 124, 124);
+            $request->image->move(public_path('uploads/categories'), $imageName);
+            $category->image = $imageName;
+        }
+
+        $category->save();
+
+        return redirect()->route('admin.categories')->with('success', 'Category added successfully!');
+    }
+
+    public function categoryEdit($id)
+    {
+        $category = Category::findOrFail($id);
+        $parentCategories = Category::where('parent_id', null)->where('id', '!=', $category->id)->orderBy('name', 'asc')->get();
+        return view('admin.category-edit', compact('category', 'parentCategories'));
+    }
+
+    public function categoryUpdate(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'slug' => 'nullable|string|max:255|unique:categories,slug,' . $id,
+            'parent_id' => 'nullable|exists:categories,id',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'status' => 'nullable|boolean',
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->name = $request->name;
+        $category->slug = $request->slug ? Str::slug($request->slug) : Str::slug($request->name);
+        $category->parent_id = $request->parent_id;
+        $category->status = $request->has('status') ? 1 : 0;
+
+        if ($request->hasFile('image')) {
+            // Delete old image and thumbnail if they exist
+            if ($category->image) {
+                @unlink(public_path('uploads/categories/' . $category->image));
+                @unlink(public_path('uploads/categories/thumbnails/' . $category->image));
+            }
+
+            $imageName = time() . '_' . uniqid() . '.' . $request->image->extension();
+            $this->generateThumbnailImage($request->image, $imageName, 'uploads/categories', 124, 124);
+            $request->image->move(public_path('uploads/categories'), $imageName);
+            $category->image = $imageName;
+        }
+
+        $category->save();
+
+        return redirect()->route('admin.categories')->with('success', 'Category updated successfully!');
+    }
+
+    public function categoryDelete($id)
+    {
+        $category = Category::findOrFail($id);
+
+        // Delete old image and thumbnail if they exist
+        if ($category->image) {
+            @unlink(public_path('uploads/categories/' . $category->image));
+            @unlink(public_path('uploads/categories/thumbnails/' . $category->image));
+        }
+
+        $category->delete();
+
+        return back()->with('success', 'Category deleted successfully!');
+    }
     
 
 }

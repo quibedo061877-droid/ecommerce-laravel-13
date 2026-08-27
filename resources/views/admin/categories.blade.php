@@ -6,9 +6,9 @@
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
         <div>
             <h1 class="text-2xl font-bold text-gray-800">Categories</h1>
-            <p class="text-sm text-gray-500">Manage product categories</p>
+            <p class="text-sm text-gray-500">Manage product categories and their details</p>
         </div>
-        <a href="#" class="bg-primary hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
+        <a href="{{ route('admin.category.add') }}" class="bg-primary hover:bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition flex items-center gap-2 shadow-sm">
             <i class="fa-solid fa-plus"></i> Add New Category
         </a>
     </div>
@@ -56,6 +56,7 @@
                         <th class="px-6 py-4">Logo</th>
                         <th class="px-6 py-4">Category Name</th>
                         <th class="px-6 py-4">Slug</th>
+                        <th class="px-6 py-4">Parent</th>
                         <th class="px-6 py-4">Products</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Action</th>
@@ -74,6 +75,13 @@
                                 <span class="font-semibold text-gray-800">{{ $category->name }}</span>
                             </td>
                             <td class="px-6 py-4 text-sm text-gray-600">{{ $category->slug }}</td>
+                            <td class="px-6 py-4 text-sm text-gray-600">
+                                @if ($category->parent)
+                                    <span class="bg-gray-100 text-gray-800 px-2.5 py-1 rounded-full text-xs font-semibold">{{ $category->parent->name }}</span>
+                                @else
+                                    <span class="bg-yellow-100 text-yellow-800 px-2.5 py-1 rounded-full text-xs font-semibold">-</span>
+                                @endif
+                            </td>
                             <td class="px-6 py-4">
                                 <span class="bg-blue-50 text-blue-700 px-2 py-1 rounded text-xs font-semibold">0</span>
                             </td>
@@ -86,10 +94,10 @@
                             </td>
                             <td class="px-6 py-4 text-right">
                                 <div class="flex items-center justify-end gap-2">
-                                    <a href="#" class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center" title="Edit">
+                                    <a href="{{ route('admin.category.edit', ['id' => $category->id]) }}" class="w-8 h-8 rounded-full hover:bg-gray-100 text-blue-500 transition flex items-center justify-center" title="Edit">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </a>
-                                    <form id="delete-form-{{ $category->id }}" method="POST" action="#">
+                                    <form id="delete-form-{{ $category->id }}" method="POST" action="{{ route('admin.category.delete', ['id' => $category->id]) }}">
                                         @csrf
                                         @method('DELETE')
                                         <button type="button" class="w-8 h-8 rounded-full hover:bg-gray-100 text-red-500 transition flex items-center justify-center" onclick="deleteCategory(this,'{{$category->name}}', {{$category->id}})" title="Delete">

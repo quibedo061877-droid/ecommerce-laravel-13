@@ -34,6 +34,11 @@ Route::middleware([AuthAdmin::class])->group(function () {
     Route::delete('/admin/brand/delete/{id}', [AdminController::class, 'brandDelete'])->name('admin.brand.delete');
 
     Route::get('/admin/categories', [AdminController::class, 'categories'])->name('admin.categories');
+    Route::get('/admin/category/add', [AdminController::class, 'categoryAdd'])->name('admin.category.add');
+    Route::post('/admin/category/store', [AdminController::class, 'categoryStore'])->name('admin.category.store');
+    Route::get('/admin/category/edit/{id}', [AdminController::class, 'categoryEdit'])->name('admin.category.edit');
+    Route::put('/admin/category/update/{id}', [AdminController::class, 'categoryUpdate'])->name('admin.category.update');
+    Route::delete('/admin/category/delete/{id}', [AdminController::class, 'categoryDelete'])->name('admin.category.delete');
 });
 
 require __DIR__.'/auth.php';

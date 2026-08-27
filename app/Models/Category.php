@@ -3,16 +3,19 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Attributes\Fillable;
+
+#[Fillable(['name','slug','image','status','parent_id'])]
 
 class Category extends Model
 {
-    use HasFactory;
+    public function parent()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
 
-    protected $fillable = [
-        'name',
-        'slug',
-        'image',
-        'status',
-    ];
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
+    }
 }
