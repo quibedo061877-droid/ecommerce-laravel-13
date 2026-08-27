@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
 use App\Http\Middleware\AuthAdmin;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 // Route::get('/', function () {
 //     return view('welcome');
@@ -39,6 +40,12 @@ Route::middleware([AuthAdmin::class])->group(function () {
     Route::get('/admin/category/edit/{id}', [AdminController::class, 'categoryEdit'])->name('admin.category.edit');
     Route::put('/admin/category/update/{id}', [AdminController::class, 'categoryUpdate'])->name('admin.category.update');
     Route::delete('/admin/category/delete/{id}', [AdminController::class, 'categoryDelete'])->name('admin.category.delete');
+
+    Route::get('/admin/products', [ProductController::class, 'products'])->name('admin.products');
+    Route::get('/admin/product/add', [ProductController::class, 'productAdd'])->name('admin.product.add');
+    
+
+    
 });
 
 require __DIR__.'/auth.php';
