@@ -108,6 +108,9 @@
                         <div class="flex items-center gap-2 pt-2">
                             <input type="checkbox" id="featured" name="featured" value="1" {{ old('features') ? 'checked' : ''}} class="rounded border-gray-300 text-primary focus:ring-primary">
                             <label for="featured" class="text-sm text-gray-700 cursor-pointer">This is a featured product</label>
+                            @error('featured')
+                                <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                            @enderror
                         </div>
                         <button class="w-full bg-primary hover:bg-blue-600 text-white py-2 rounded-lg text-sm font-medium transition mt-4 shadow">Save Product</button>
                     </div>
@@ -152,7 +155,9 @@
                         <p class="text-sm text-gray-500">Click to upload main image</p>
                         <input type="file" id="product-image" name="image" class="hidden" accept="image/png, image/jpeg, image/jpg, image/webp">
                     </label>
-
+                    @error('image')
+                        <p class="text-sm text-red-500 mt-1">{{ $message }}</p>
+                    @enderror
                     <div id="single-preview-container" class="hidden mt-4 relative h-48 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden group shadow-sm">
                         <img id="single-image-preview" src="" class="max-w-full max-h-full object-contain">
                         <button type="button" id="remove-single-image" class="absolute top-2 right-2 bg-red-500 text-white rounded-md w-7 h-7 flex items-center justify-center text-sm shadow-md hover:bg-red-600 transition focus:outline-none">
@@ -169,9 +174,10 @@
                         <p class="text-sm text-gray-500">Click to upload multiple gallery images</p>
                         <input type="file" id="product-images" name="images[]" class="hidden" multiple accept="image/png, image/jpeg, image/jpg, image/webp">
                     </label>
-
-                    <div id="gallery-preview-container" class="grid grid-cols-3 gap-3 mt-4">
-                        </div>
+                    @if ($errors->has('images') || $errors->has('images.*'))
+                        <p class="text-sm text-red-500 mt-1">{{ $errors->first('images') ?: $errors->first('images.*') }}</p>
+                    @endif
+                    <div id="gallery-preview-container" class="grid grid-cols-3 gap-3 mt-4"></div>
                 </div>
             </div>
 
@@ -179,6 +185,128 @@
     </form>
 
 </main>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        // ==========================================
+        // 1. AUTO-SLUG GENERATOR
+        // ==========================================
+        const productNameInput = document.getElementById('product-name');
+        const productSlugInput = document.getElementById('product-slug');
 
+        if (productNameInput && productSlugInput) {
+            productNameInput.addEventListener('input', function() {
+                const slug = this.value.toLowerCase()
+                    .trim()
+                    .replace(/[^a-z0-9 -]/g, '')
+                    .replace(/\s+/g, '-')
+                    .replace(/-+/g, '-');
+                productSlugInput.value = slug;
+            });
+        }
+
+        // ==========================================
+        // 2. SINGLE IMAGE UPLOAD (Main Product Image)
+        // ==========================================
+        const singleImageInput = document.getElementById('product-image');
+        const singleUploadLabel = document.getElementById('single-upload-label');
+        const singlePreviewContainer = document.getElementById('single-preview-container');
+        const singleImagePreview = document.getElementById('single-image-preview');
+        const removeSingleBtn = document.getElementById('remove-single-image');
+
+        if (singleImageInput) {
+            singleImageInput.addEventListener('change', function(event) {
+                const file = event.target.files[0];
+                if (file && file.type.startsWith('image/')) {
+                    singleImagePreview.src = URL.createObjectURL(file);
+                    singleUploadLabel.classList.add('hidden');
+                    singlePreviewContainer.classList.remove('hidden');
+                    singlePreviewContainer.classList.add('flex'); // Keep flex layout active
+                } else {
+                    resetSingleImage();
+                }
+            });
+        }
+
+        if (removeSingleBtn) {
+            removeSingleBtn.addEventListener('click', function(event) {
+                event.preventDefault();
+                resetSingleImage();
+            });
+        }
+
+        function resetSingleImage() {
+            singleImageInput.value = '';
+            singleImagePreview.src = '';
+            singlePreviewContainer.classList.add('hidden');
+            singlePreviewContainer.classList.remove('flex');
+            singleUploadLabel.classList.remove('hidden');
+        }
+
+        // ==========================================
+        // 3. MULTIPLE IMAGE UPLOAD (Gallery Images)
+        // ==========================================
+        const galleryInput = document.getElementById('product-images');
+        const galleryPreviewContainer = document.getElementById('gallery-preview-container');
+        
+        let selectedGalleryFiles = []; // Array to store multiple files
+
+        if (galleryInput && galleryPreviewContainer) {
+            galleryInput.addEventListener('change', function(event) {
+                const files = Array.from(event.target.files);
+                
+                files.forEach(file => {
+                    if (file.type.startsWith('image/')) {
+                        // Prevent duplicates
+                        const isDuplicate = selectedGalleryFiles.some(f => f.name === file.name && f.size === file.size);
+                        if (!isDuplicate) {
+                            selectedGalleryFiles.push(file);
+                        }
+                    }
+                });
+
+                updateGalleryInputAndPreviews();
+            });
+        }
+
+        function updateGalleryInputAndPreviews() {
+            // Sync HTML input with tracking array
+            const dataTransfer = new DataTransfer();
+            selectedGalleryFiles.forEach(file => dataTransfer.items.add(file));
+            galleryInput.files = dataTransfer.files;
+
+            // Clear current previews
+            galleryPreviewContainer.innerHTML = '';
+
+            // Re-render previews
+            selectedGalleryFiles.forEach((file, index) => {
+                const objectUrl = URL.createObjectURL(file);
+                
+                const div = document.createElement('div');
+                div.className = 'relative h-24 bg-gray-50 rounded-lg border border-gray-200 flex items-center justify-center overflow-hidden group shadow-sm';
+                
+                const img = document.createElement('img');
+                img.src = objectUrl;
+                img.className = 'w-full h-full object-cover';
+                
+                const removeBtn = document.createElement('button');
+                removeBtn.type = 'button';
+                removeBtn.className = 'absolute top-1 right-1 bg-red-500 text-white rounded-md w-6 h-6 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity focus:outline-none shadow-md';
+                removeBtn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                
+                removeBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    selectedGalleryFiles.splice(index, 1);
+                    updateGalleryInputAndPreviews();
+                    URL.revokeObjectURL(objectUrl);
+                });
+
+                div.appendChild(img);
+                div.appendChild(removeBtn);
+                galleryPreviewContainer.appendChild(div);
+            });
+        }
+    });
+</script>
 <!-- Main Content End -->
 </x-admin-layout>
