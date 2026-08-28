@@ -55,8 +55,8 @@ class ProductController extends Controller
         $product->sale_price = $request->sale_price;
         $product->SKU = $request->SKU;
         $product->stock_status = $request->stock_status;
-        $product->featured = $request->featured;
-        $product->status = $request->status;
+        $product->featured = $request->boolean('featured');
+        $product->status = $request->boolean('status');
         $product->quantity = $request->quantity;
         $product->category_id = $request->category_id;
         $product->brand_id = $request->brand_id;
@@ -212,6 +212,72 @@ class ProductController extends Controller
 
         return redirect()->route('admin.products')->with('success', 'Product updated successfully!');
 
+    }
+
+    public function productDelete($id){
+        $product = Product::findOrFail($id);
+
+        if ($product->image && File::exists(public_path('uploads/products/' . $product->image))) {
+            @unlink(public_path('uploads/products/' . $product->image));
+        }
+
+        if ($product->image && File::exists(public_path('uploads/products/thumbnails' . $product->image))) {
+            @unlink(public_path('uploads/products/thumbnails/' . $product->image));
+        }
+
+        if ($product->images) {
+            $gallery_images = explode(',', $product->images);
+            foreach ($gallery_images as $gallery_image) {
+                if ($gallery_image && File::exists(public_path('uploads/products/' . $gallery_image))) {
+                    @unlink(public_path('uploads/products/' . $gallery_image));
+                }
+
+                if ($gallery_image && File::exists(public_path('uploads/products/thumbnails' . $gallery_image))) {
+                    @unlink(public_path('uploads/products/thumbnails/' . $gallery_image));
+                }
+            }
+        }
+
+        $product->delete();
+
+        return redirect()->route('admin.products')->with('success', 'Product deleted successfully!');
+    }
+
+    public function productsBulkDelete(Request $request){
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:products,id',
+        ]);
+
+        $ids = $request->ids;
+        $products = Product::whereIn('id', $ids)->get();
+
+        foreach ($products as $product) {
+            if ($product->image && File::exists(public_path('uploads/products/' . $product->image))) {
+                @unlink(public_path('uploads/products/' . $product->image));
+            }
+
+            if ($product->image && File::exists(public_path('uploads/products/thumbnails' . $product->image))) {
+                @unlink(public_path('uploads/products/thumbnails/' . $product->image));
+            }
+
+            if ($product->images) {
+                $gallery_images = explode(',', $product->images);
+                foreach ($gallery_images as $gallery_image) {
+                    if ($gallery_image && File::exists(public_path('uploads/products/' . $gallery_image))) {
+                        @unlink(public_path('uploads/products/' . $gallery_image));
+                    }
+
+                    if ($gallery_image && File::exists(public_path('uploads/products/thumbnails' . $gallery_image))) {
+                        @unlink(public_path('uploads/products/thumbnails/' . $gallery_image));
+                    }
+                }
+            }
+
+            $product->delete();
+        }
+
+        return back()->with('success', count($ids) . ' products deleted successfully!');
     }
 
 
