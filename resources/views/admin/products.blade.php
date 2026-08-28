@@ -63,13 +63,18 @@
                 @endif
             </form>
 
-            <button class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-file-export"></i> Export
-            </button>
+            <div class="flex gap-2">
+                <button onclick="printDiv('printableArea')" class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-print"></i> Print
+                </button>
+                <a href="{{route('admin.product.export')}}" class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-file-export"></i> Export
+                </a>
+            </div>
         </div>
     </div>
 
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+    <div id="printableArea" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
         <form id="bulkActionForm" method="POST" action="{{route('admin.products.bulk.delete')}}">
             @csrf
             @method('DELETE')
@@ -284,6 +289,17 @@
             bulkForm.submit();
         }
     });
+</script>
+<script>
+    function printDiv(divId){
+        var printContents = document.getElementById(divId).innerHTML;
+        var originalContents = document.body.innerHTML;
+
+        document.body.innerHTML = printContents;
+        window.print();
+
+        document.body.innerHTML = originalContents;
+    }
 </script>
 <!-- Main Content End -->
 </x-admin-layout>
