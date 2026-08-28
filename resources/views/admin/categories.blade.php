@@ -39,7 +39,7 @@
 
                 @if(request('search') || request()->filled('status'))
                     <a href="{{ route('admin.categories') }}" class="text-gray-500 hover:text-gray-700 text-sm transition flex items-center gap-2">
-                        <i class="fa-solid fa-xmark"></i> Clear
+                        <i class="fa-solid fa-xmark"></i> Clear Filters
                     </a>
                 @endif
             </div>

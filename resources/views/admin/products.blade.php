@@ -28,28 +28,40 @@
     @endif
     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
         <div class="flex flex-col md:flex-row gap-4 justify-between">
-            <div class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
+            <form method="GET" action="{{ url()->current()}}" id="filterForm" class="flex flex-col md:flex-row gap-4 w-full md:w-auto">
                 <div class="relative w-full md:w-64">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <i class="fa-solid fa-search text-gray-400"></i>
                     </span>
-                    <input type="text" class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Search product name...">
+                    <input type="text" name="search" value="{{request('search')}}" onkeypress="if(event.key==='Enter') this.form.submit();" class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" placeholder="Search product name...">
                 </div>
 
-                <select class="w-full md:w-48 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
+                <select name="category" onchange="this.form.submit()" class="w-full md:w-48 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
                     <option value="">All Categories</option>
-                    <option value="furniture">Furniture</option>
-                    <option value="decor">Decor</option>
-                    <option value="lighting">Lighting</option>
+                    @foreach ($categories as $category )
+                        <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : ''}}>{{ $category->name }}</option>
+                    @endforeach
                 </select>
 
-                <select class="w-full md:w-40 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
-                    <option value="">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="draft">Draft</option>
-                    <option value="out">Out of Stock</option>
+                <select name="brand" onchange="this.form.submit()" class="w-full md:w-48 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
+                    <option value="">All Brands</option>
+                    @foreach ($brands as $brand )
+                        <option value="{{ $brand->id }}" {{ request('brand') == $brand->id ? 'selected' : ''}}>{{ $brand->name }}</option>
+                    @endforeach
                 </select>
-            </div>
+
+                <select name="status" onchange="this.form.submit()" class="w-full md:w-40 border px-3 py-2 rounded-lg text-sm focus:outline-none focus:border-primary bg-white text-gray-600">
+                    <option value="">All Status</option>
+                    <option value="0" {{ request('status') == '0' ? 'selected' : '' }}>Draft</option>
+                    <option value="1" {{ request('status') == '1' ? 'selected' : '' }}>Published</option>
+                </select>
+
+                @if(request()->hasAny(['search','categroy','brand','status']))
+                    <a href="{{ route('admin.products') }}" class="text-gray-500 hover:text-gray-700 text-sm transition flex items-center gap-2">
+                        <i class="fa-solid fa-xmark"></i> Clear Filters
+                    </a>
+                @endif
+            </form>
 
             <button class="border border-gray-300 text-gray-600 hover:bg-gray-50 px-4 py-2 rounded-lg text-sm font-medium transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-file-export"></i> Export
@@ -104,13 +116,15 @@
                                 </td>
                                 <td class="px-6 py-4 text-sm text-gray-600">{{$product->quantity}}</td>
                                 <td class="px-6 py-4">
-                                    <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
-                                        @if ($product->status)
+                                    @if ($product->status)
+                                        <span class="bg-green-100 text-green-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                                             Published
-                                        @else
+                                        </span>
+                                    @else
+                                        <span class="bg-orange-100 text-orange-700 px-2.5 py-1 rounded-full text-xs font-semibold">
                                             Draft
-                                        @endif
-                                    </span>
+                                        </span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <div class="flex items-center justify-end gap-2">
